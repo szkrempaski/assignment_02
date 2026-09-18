@@ -4,4 +4,4 @@ The biggest lesson was "coerce and carry on." Bad data like "N/A" or "one" used 
 
 I also learned to tell import errors apart from logic errors. When __init__.py imports something that doesn't exist yet, every test disappears instead of just failing — that confused me for a while until I read the actual traceback instead of guessing.
 
-Next time I want to get better at reading full error messages carefully before trying a fix, and committing/pushing more often so I don't lose points over something like a missing file.
+Next time I want to get better at reading full error messages carefully before trying a fix, and committing/pushing more often so I don't lose points over something like a missing file.   
