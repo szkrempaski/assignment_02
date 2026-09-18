@@ -26,8 +26,6 @@ def clean_currency(value: Optional[Any]) -> float:
     try:
         return float(s)
     except ValueError:
-        # Anything still unparsable ("garbage", etc.) is coerced to 0.0
-        # rather than allowed to raise and kill the whole report.
         return 0.0
 
 
@@ -46,4 +44,42 @@ def clean_quantity(value: Optional[Any]) -> int:
     try:
         return int(s)
     except ValueError:
-        # Handles cases
+        return 0
+
+
+def clean_sales_data(raw_data: list[dict]) -> list[dict]:
+    """Clean every raw row and attach a computed total_revenue key."""
+    cleaned = []
+    for row in raw_data:
+        price = clean_currency(row.get("price"))
+        qty = clean_quantity(row.get("qty"))
+
+        new_row = dict(row)
+        new_row["price"] = price
+        new_row["qty"] = qty
+        new_row["total_revenue"] = price * qty
+        cleaned.append(new_row)
+    return cleaned
+
+
+def calculate_total_revenue(cleaned_data: list[dict]) -> float:
+    """Sum total_revenue across every cleaned row."""
+    return sum(row["total_revenue"] for row in cleaned_data)
+
+
+def summarize_by_item(cleaned_data: list[dict]) -> list[dict]:
+    """Group cleaned rows by item, summing units and revenue per item."""
+    acc: dict[str, dict] = {}
+    for row in cleaned_data:
+        item = row["item"]
+        if item not in acc:
+            acc[item] = {"item": item, "units_sold": 0, "revenue": 0.0}
+        acc[item]["units_sold"] += row["qty"]
+        acc[item]["revenue"] += row["total_revenue"]
+
+    summary = list(acc.values())
+    summary.sort(key=lambda e: (-e["revenue"], e["item"]))
+    return summary
+
+
+def
