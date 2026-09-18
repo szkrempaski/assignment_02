@@ -1,6 +1,9 @@
-Write your reflection here.
+This assignment forced me to think about separation of concerns in a way the first assignment didn't. Splitting the work into extract.py, transform.py, and display.py meant each module had exactly one job — Extract produces messy raw data, Transform cleans and calculates, Display formats and prints. Once I internalized that transform.py should never call print(), it became obvious where a line of code belonged: if I was tempted to format a number or print a table inside a report file, that was a sign the logic should live in the package instead.
 
-See reflection.md for what makes a good reflection — be specific, use the
-terminology from this assignment (package, module, ETL, coercion, public API,
-relative import, accumulator, group by, unit vs. integration test), and make it
-actionable.
+The coercion functions (clean_currency and clean_quantity) taught me the "coerce and carry on" philosophy. My first instinct was to let a bad value like "N/A" or "one" raise an exception, but wrapping the conversion in a try/except and returning 0.0 or 0 meant one malformed row couldn't take down a report built on hundreds of good ones. That's a pattern I'll reuse anytime I'm working with real-world data exports.
+
+Writing summarize_by_item was my first real accumulator pattern — a dictionary keyed by item name that I built up row by row, then converted to a list with .values(). The genuinely useful moment came in Step 9: writing summarize_by_day was almost the same group by logic applied to a different column, and find_top_entry — because I'd written it generically against entry[field] instead of hardcoding a key — worked immediately on day summaries without any changes. That's the clearest argument in the whole assignment for building a package instead of three copy-pasted scripts: the Operations report needed exactly one new function, because everything else already existed.
+
+I also learned to read unit test failures differently from integration test failures. A scoped unit test failing (like test_summarize_by_item) told me the function itself was wrong. A scoped test passing but its _on_generated_data partner failing told me the bug was upstream — usually in how clean_sales_data was handing off values. That distinction saved me time I would have otherwise spent debugging the wrong function.
+
+Going forward, I want to be more disciplined about building the public API (__init__.py) incrementally rather than writing all my transform.py functions first and exporting them at the end — I hit the "tests vanish entirely" failure mode once because I exported a function I hadn't finished writing yet, and it took a minute to realize the traceback was an ImportError during collection, not a logic bug.
