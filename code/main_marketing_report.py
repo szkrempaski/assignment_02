@@ -26,8 +26,6 @@ def main() -> None:
     top_by_revenue = find_top_entry(item_summary, "revenue")
     top_by_units = find_top_entry(item_summary, "units_sold")
 
-    print("=== MARKETING: Sales by Item ===")
-    print()
     print_item_table(item_summary)
     print()
     print(f"Top seller by revenue: {top_by_revenue['item']} (${top_by_revenue['revenue']:,.2f})")

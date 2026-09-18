@@ -21,7 +21,6 @@ def clean_currency(value: Optional[Any]) -> float:
     if not s or s.upper() == "N/A":
         return 0.0
 
-    # Strip formatting characters ("$1,200.00" -> "1200.00") before parsing.
     s = s.replace("$", "").replace(",", "")
     try:
         return float(s)
@@ -82,4 +81,28 @@ def summarize_by_item(cleaned_data: list[dict]) -> list[dict]:
     return summary
 
 
-def
+def summarize_by_day(cleaned_data: list[dict]) -> list[dict]:
+    """Group cleaned rows by date, summing units and revenue per day."""
+    acc: dict[str, dict] = {}
+    for row in cleaned_data:
+        date = row["date"]
+        if date not in acc:
+            acc[date] = {"date": date, "units_sold": 0, "revenue": 0.0}
+        acc[date]["units_sold"] += row["qty"]
+        acc[date]["revenue"] += row["total_revenue"]
+
+    summary = list(acc.values())
+    summary.sort(key=lambda e: e["date"])
+    return summary
+
+
+def find_top_entry(summary: list[dict], field: str) -> dict:
+    """Return the entry with the largest value in `field`; {} if empty."""
+    if not summary:
+        return {}
+
+    top = summary[0]
+    for entry in summary[1:]:
+        if entry[field] > top[field]:
+            top = entry
+    return top

@@ -17,7 +17,7 @@ from .transform import (
 from .display import print_sales_table, print_item_table, print_day_table
 
 __all__ = [
-    "get_raw_sales_data", 
+    "get_raw_sales_data",
     "clean_sales_data",
     "calculate_total_revenue",
     "summarize_by_item",

@@ -22,8 +22,6 @@ def main() -> None:
     cleaned_data = clean_sales_data(raw_data)
     total_revenue = calculate_total_revenue(cleaned_data)
 
-    print("=== FINANCE: Sales Transactions ===")
-    print()
     print_sales_table(cleaned_data)
     print()
     print(f"Total Revenue: ${total_revenue:,.2f}")
